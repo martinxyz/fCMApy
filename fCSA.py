@@ -27,23 +27,28 @@ class fCSA:
 
         self.avg_loss = 0.0
 
-    def step(self, function):
-        # generate offspring function
+    def ask(self):
+        # generate offspring
         sigma = math.sqrt(self.variance)
         z = np.random.normal(np.zeros((self.n_off, self.n)))
         x = self.mean[np.newaxis, :] + sigma * z
 
         # evaluate offspring
-        fvals = np.zeros(self.n_off)
-        for i in range(self.n_off):
-            fvals[i] = function(x[i, :])
+        if self.noise_adaptation:
+            x = np.repeat(x, 2, axis=0)
+        return x
+
+    def tell(self, x, fvals):
+        x, fvals = np.asarray(x), np.asarray(fvals)
+        sigma = math.sqrt(self.variance)
+        z = (x - self.mean) / sigma
 
         # noise handling
         if self.noise_adaptation:
-            # acquire second evaluation
-            fvals2 = np.zeros(self.n_off)
-            for i in range(self.n_off):
-                fvals2[i] = function(x[i, :])
+            assert np.all(x[0::2] == x[1::2])
+            x = x[0::2]
+            z = z[0::2]
+            fvals, fvals2 = fvals[0::2], fvals[1::2]
 
             # gather noise variables
             var_noise = np.mean((fvals-fvals2)**2)

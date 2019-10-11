@@ -14,5 +14,6 @@ optimizer = fCSA(np.ones(n), noise_adaptation=explicit_noise_handling)
 for i in range(10000):
     if not explicit_noise_handling:
         optimizer.rate = n/(n + i)
-    optimizer.step(f_noise)
+    solutions = optimizer.ask()
+    optimizer.tell(solutions, [f(x) for x in solutions])
     print(i, f(optimizer.mean), optimizer.avg_loss, np.sqrt(optimizer.variance), optimizer.rate)
