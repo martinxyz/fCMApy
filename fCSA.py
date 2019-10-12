@@ -2,14 +2,14 @@ import numpy as np
 import math
 
 class fCSA:
-    def __init__(self, init_mean, init_variance=1.0, noise_adaptation=False):
+    def __init__(self, init_mean, init_variance=1.0, noise_adaptation=False, popsize=None):
         # variables of the normal distribution
         self.mean = init_mean
         self.variance = init_variance
 
         # integer variables for population and dimensionality
         self.n = init_mean.shape[0]
-        self.n_off = int(4 + math.floor(3 * math.log(self.n)))
+        self.n_off = popsize or int(4 + math.floor(3 * math.log(self.n)))
 
         # learning rate and initial value for mu_eff
         self._mu_eff = float(self.n_off)
