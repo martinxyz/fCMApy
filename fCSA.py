@@ -51,7 +51,7 @@ class fCSA:
             fvals, fvals2 = fvals[0::2], fvals[1::2]
 
             # gather noise variables
-            var_noise = np.mean((fvals-fvals2)**2)
+            var_noise = np.mean((fvals-fvals2)**2/4)
             fvals = (fvals+fvals2)/2
             fmean = np.mean(fvals)
             fvar = np.sum((fvals - fmean)**2)/(self.n_off - 1.0)
@@ -60,8 +60,8 @@ class fCSA:
             cztest = 0.01 * self.rate**1.5
             self._fvar = (1-cztest)*self._fvar + cztest * fvar
             self._sigma_noise = (1-cztest) * self._sigma_noise + cztest * var_noise
-            ztest = 0.5*(self._fvar/self._sigma_noise - 1)
-            self.rate = 1.0/(1.0+1.0/(ztest/self.n_off))
+            ztest = 0.5*(self._fvar/self._sigma_noise + 1)
+            self.rate = 1.0/(1.0+1.0/(ztest - 1.0))
 
         # store estimate for current loss
         self.avg_loss = np.mean(fvals)
